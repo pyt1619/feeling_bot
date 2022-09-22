@@ -40,6 +40,11 @@ async def text_mes(msg: types.Message):
 		user = msg.reply_to_message.text.split(':')[0]
 		await bot.send_message(user, msg.text)
 	else:
+		if(db.get_language(msg.from_user.id)=='Русский'):
+			await bot.send_message(msg.from_user.id, f'Спасибо, что делишься со мной')
+		else:
+			await bot.send_message(msg.from_user.id, f'Thanks for sharing with me 💓')
+
 		for i in config.ADMINS:
 			await bot.send_message(i, f'{msg.from_user.id}:{msg.text}')
 
@@ -48,18 +53,17 @@ async def text_mes(msg: types.Message):
 
 @dp.message_handler(content_types=['document'])
 async def load_file(message: types.Message):
-	if(msg.from_user.id in config.ADMINS):
+	if(message.from_user.id in config.ADMINS):
 		await message.document.download(destination_file='conf.csv') # это его скачивание
 		utils.update_conf()
 		utils.update_time()
 		await message.answer('Обновленно')
+		await bot.send_message(message.from_user.id, utils.zn[1][2], reply_markup=types.ReplyKeyboardRemove())
+		await bot.send_message(message.from_user.id, utils.zn[1][3], reply_markup=types.ReplyKeyboardRemove())
 
 
 @dp.message_handler()
 async def choose_your_dinner():
-	
-
-
 	if(utils.get_time()==utils.next_send):
 		utils.update_time()
 		for row in db.get_users():

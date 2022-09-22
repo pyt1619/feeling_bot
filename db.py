@@ -47,6 +47,20 @@ def set_language(id_telegram,language):
 	except sqlite3.Error as error:
 		print("Ошибка при работе с SQLite", error)
 
+def get_language(id_telegram):
+	try:
+		# подключение к бд
+		con = sqlite3.connect('data.db')
+		cur = con.cursor()
+
+		info = cur.execute('SELECT * FROM users WHERE id_telegram=?', (id_telegram, ))
+		records = info.fetchall()
+
+		return records[0][2]
+
+	except sqlite3.Error as error:
+		print("Ошибка при работе с SQLite", error)
+
 def check_user(id_telegram):
 	try:
 		# подключение к бд
