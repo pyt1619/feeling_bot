@@ -12,7 +12,9 @@ import config, db, utils, keyboards
 from datetime import date
 
 bot = Bot(token=config.TOKEN)
+bot2 = Bot(token=config.TOKEN2)
 dp = Dispatcher(bot)
+dp2 = Dispatcher(bot2)
 
 
 @dp.message_handler(commands=['start'])
@@ -22,33 +24,48 @@ async def process_start_command(message: types.Message):
 
 	await bot.send_message(message.from_user.id, f"{utils.zn[1][0]} / {utils.zn[1][1]}", reply_markup=keyboards.start_kb)
 
+
+
 @dp.message_handler()
 async def text_mes(msg: types.Message):
 	if(msg.text == 'Русский'):
 		db.set_language(msg.from_user.id,'Русский')
 		await bot.send_message(msg.from_user.id, utils.zn[1][2], reply_markup=types.ReplyKeyboardRemove())
+		await bot.send_message(msg.from_user.id, utils.zn[1][4])
 
 	elif(msg.text == 'English'):
 		db.set_language(msg.from_user.id,'English')
 		await bot.send_message(msg.from_user.id, utils.zn[1][3], reply_markup=types.ReplyKeyboardRemove())
+		await bot.send_message(msg.from_user.id, utils.zn[1][5])
 
 	elif(msg.text.lower() == 'таблица'):
 		if(msg.from_user.id in config.ADMINS):
-			db.import_messages()
-			await bot.send_document(msg.from_user.id, open("messages.csv", "rb"), reply_markup=types.ReplyKeyboardRemove())
+			if(msg.reply_to_message):
+				user = int(msg.reply_to_message.text.split(':')[0])
+				db.import_messages_for_user(user)
+				await bot2.send_document(msg.from_user.id, open("messages.csv", "rb"), reply_markup=types.ReplyKeyboardRemove())
+			else:
+				db.import_messages()
+				await bot2.send_document(msg.from_user.id, open("messages.csv", "rb"), reply_markup=types.ReplyKeyboardRemove())
+
 	elif msg.reply_to_message and msg.from_user.id in config.ADMINS:
 		user = msg.reply_to_message.text.split(':')[0]
 		await bot.send_message(user, msg.text)
+
 	else:
-		if(db.get_language(msg.from_user.id)=='Русский'):
-			await bot.send_message(msg.from_user.id, f'Спасибо, что делишься со мной')
-		else:
-			await bot.send_message(msg.from_user.id, f'Thanks for sharing with me 💓')
+		try:
+			if(db.get_language(msg.from_user.id)=='Русский'):
+				await bot.send_message(msg.from_user.id, f'Спасибо, что делишься со мной 💓')
+			else:
+				await bot.send_message(msg.from_user.id, f'Thanks for sharing with me 💓')
 
-		for i in config.ADMINS:
-			await bot.send_message(i, f'{msg.from_user.id}:{msg.text}')
+			for i in config.ADMINS:
+				await bot2.send_message(i, f'{msg.from_user.id}:{msg.text}')
 
-		db.add_message(msg.from_user.id,msg.text,datetime.now(pytz.timezone('Europe/Moscow')))
+			db.add_message(msg.from_user.id,msg.text,datetime.now(pytz.timezone('Europe/Moscow')))
+		except:
+			pass
+		
 
 
 @dp.message_handler(content_types=['document'])
@@ -58,8 +75,6 @@ async def load_file(message: types.Message):
 		utils.update_conf()
 		utils.update_time()
 		await message.answer('Обновленно')
-		await bot.send_message(message.from_user.id, utils.zn[1][2], reply_markup=types.ReplyKeyboardRemove())
-		await bot.send_message(message.from_user.id, utils.zn[1][3], reply_markup=types.ReplyKeyboardRemove())
 
 
 @dp.message_handler()
@@ -67,19 +82,21 @@ async def choose_your_dinner():
 	if(utils.get_time()==utils.next_send):
 		utils.update_time()
 		for row in db.get_users():
-			d1 = datetime.strptime(row[1][:-6],"%Y-%m-%d %H:%M:%S.%f")
-			d2 = datetime.now()
-			if((d2-d1).days<3):
-				if(row[2]=='Русский'):
-					await bot.send_message(row[0], utils.zn[1][4])
-				elif(row[2]=='English'):
-					await bot.send_message(row[0], utils.zn[1][5])
-			else:
-				if(row[2]=='Русский'):
-					await bot.send_message(row[0], utils.zn[1][6])
-				elif(row[2]=='English'):
-					await bot.send_message(row[0], utils.zn[1][7])
-
+			try:
+				d1 = datetime.strptime(row[1][:-6],"%Y-%m-%d %H:%M:%S.%f")
+				d2 = datetime.now()
+				if((d2-d1).days<3):
+					if(row[2]=='Русский'):
+						await bot.send_message(row[0], utils.zn[1][4])
+					elif(row[2]=='English'):
+						await bot.send_message(row[0], utils.zn[1][5])
+				else:
+					if(row[2]=='Русский'):
+						await bot.send_message(row[0], utils.zn[1][6])
+					elif(row[2]=='English'):
+						await bot.send_message(row[0], utils.zn[1][7])
+			except:
+				pass
 
 async def scheduler():
 	aioschedule.every(1).seconds.do(choose_your_dinner)

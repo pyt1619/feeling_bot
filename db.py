@@ -1,5 +1,6 @@
 from datetime import datetime
 import sqlite3
+import csv
 
 
 def add_user(id_telegram, joining_date):
@@ -115,7 +116,7 @@ def import_messages():
 		except:
 			pass
 
-		cur.execute("SELECT * from messages ORDER BY send_date DESC")
+		cur.execute("SELECT * from messages ORDER BY id_telegram DESC")
 		records = cur.fetchall()
 		with open('messages.csv', mode='w', encoding='utf-8') as employee_file:
 			employee_writer = csv.writer(employee_file, delimiter=';', quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -132,3 +133,40 @@ def import_messages():
 
 	except sqlite3.Error as error:
 		print("Ошибка при работе с SQLite", error) 
+
+
+
+def import_messages_for_user(id_telegram):
+	try:
+		con = sqlite3.connect('data.db')
+		cur = con.cursor()
+		
+		try:
+			cur.execute('''CREATE TABLE messages (id_telegram INTEGER,message_text text, send_date timestamp)''')
+		except:
+			pass
+
+
+		info = cur.execute('SELECT * FROM messages WHERE id_telegram=? ORDER BY send_date DESC', (id_telegram, ))
+		records = info.fetchall()
+
+		with open('messages.csv', mode='w', encoding='utf-8') as employee_file:
+			employee_writer = csv.writer(employee_file, delimiter=';', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+			l = ['telegram ID', "текст сообшения",'дата и время']
+			employee_writer.writerow(l)
+
+		for row in records:
+			with open('messages.csv', mode='a', encoding='utf-8') as employee_file:
+				employee_writer = csv.writer(employee_file, delimiter=';', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+				l = [row[0], row[1],datetime.strptime(row[2][:-6],"%Y-%m-%d %H:%M:%S.%f").strftime('%Y-%m-%d %H:%M:%S')]
+				employee_writer.writerow(l)
+
+		cur.close()
+
+	except sqlite3.Error as error:
+		print("Ошибка при работе с SQLite", error) 
+
+
+
+
+
