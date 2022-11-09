@@ -1,9 +1,6 @@
 from datetime import datetime
 import sqlite3
-<<<<<<< HEAD
 import csv
-=======
->>>>>>> 179936e (новый функционал)
 
 
 def add_user(id_telegram, joining_date):
@@ -108,6 +105,67 @@ def add_message(id_telegram,message_text,send_date):
 	except sqlite3.Error as error:
 		print("Ошибка при работе с SQLite", error)
 
+def get_question(id_telegram):
+	try:
+		con = sqlite3.connect('data.db')
+		cur = con.cursor()
+		try:
+			cur.execute('''CREATE TABLE questions_count (id_telegram INTEGER,count int)''')
+		except:
+			pass
+
+		info = cur.execute('SELECT * FROM questions_count WHERE id_telegram=?', (id_telegram, ))
+
+		if info.fetchone() is None: 
+			sqlite_insert_with_param = """INSERT INTO 'questions_count'
+						  ('id_telegram', 'count')
+						  VALUES (?, ?);"""
+
+			cur.execute(sqlite_insert_with_param, (id_telegram, 0))
+			con.commit()
+
+		info = cur.execute('SELECT * FROM questions_count WHERE id_telegram=?', (id_telegram, ))
+		count = int(info.fetchall()[0][1])+1
+		cur.close()
+	except sqlite3.Error as error:
+		print("Ошибка при работе с SQLite", error)
+
+
+def update_question(id_telegram):
+	try:
+		# подключение к бд
+		con = sqlite3.connect('data.db')
+		cur = con.cursor()
+
+		try:
+			cur.execute('''CREATE TABLE questions_count (id_telegram INTEGER,count int)''')
+		except:
+			pass
+
+		info = cur.execute('SELECT * FROM questions_count WHERE id_telegram=?', (id_telegram, ))
+
+		if info.fetchone() is None: 
+			sqlite_insert_with_param = """INSERT INTO 'questions_count'
+						  ('id_telegram', 'count')
+						  VALUES (?, ?);"""
+
+			cur.execute(sqlite_insert_with_param, (id_telegram, 0))
+			con.commit()
+
+		info = cur.execute('SELECT * FROM questions_count WHERE id_telegram=?', (id_telegram, ))
+		count = int(info.fetchall()[0][1])+1
+
+		# вставить данные пользователя
+		sqlite_insert_with_param = """INSERT INTO 'questions_count'
+						  ('id_telegram', 'count')
+						  VALUES (?, ?);"""
+
+		cur.execute(sqlite_insert_with_param, (id_telegram, count))
+		con.commit()
+		cur.close()
+	except sqlite3.Error as error:
+		print("Ошибка при работе с SQLite", error)
+
 
 def import_messages():
 	try:
@@ -119,11 +177,7 @@ def import_messages():
 		except:
 			pass
 
-<<<<<<< HEAD
 		cur.execute("SELECT * from messages ORDER BY id_telegram DESC")
-=======
-		cur.execute("SELECT * from messages ORDER BY send_date DESC")
->>>>>>> 179936e (новый функционал)
 		records = cur.fetchall()
 		with open('messages.csv', mode='w', encoding='utf-8') as employee_file:
 			employee_writer = csv.writer(employee_file, delimiter=';', quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -140,7 +194,6 @@ def import_messages():
 
 	except sqlite3.Error as error:
 		print("Ошибка при работе с SQLite", error) 
-<<<<<<< HEAD
 
 
 
@@ -178,5 +231,3 @@ def import_messages_for_user(id_telegram):
 
 
 
-=======
->>>>>>> 179936e (новый функционал)

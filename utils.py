@@ -8,6 +8,8 @@ times=[] #промежутки рассылки
 next_send = 0 #следующее время рассылки
 id_send=0 #id временного промежутка
 
+times_send = []
+
 def get_time():	
 	hour = int(datetime.now(pytz.timezone('Europe/Moscow')).strftime("%H"))
 	minute = int(datetime.now(pytz.timezone('Europe/Moscow')).strftime("%M"))
@@ -27,16 +29,19 @@ def update_conf():
 
 
 def update_time():
-	global id_send
-	global next_send
-	time1=int(times[id_send].split('-')[0].split(':')[0])*60+int(times[id_send].split('-')[0].split(':')[1])
-	time2=int(times[id_send].split('-')[1].split(':')[0])*60+int(times[id_send].split('-')[1].split(':')[1])
-	next_send = random.randint(time1,time2)
-	if(id_send!=len(times)-1):
-		id_send+=1
-	else:
-		id_send=0
-
+	times_send.clear()
+	for i in range(len(times)):
+		global id_send
+		global next_send
+		time1=int(times[id_send].split('-')[0].split(':')[0])*60+int(times[id_send].split('-')[0].split(':')[1])
+		time2=int(times[id_send].split('-')[1].split(':')[0])*60+int(times[id_send].split('-')[1].split(':')[1])
+		next_send = random.randint(time1,time2)
+		if(id_send!=len(times)-1):
+			id_send+=1
+		else:
+			id_send=0
+		times_send.append(next_send)
+	print(times_send)
 
 update_conf()
 update_time()
