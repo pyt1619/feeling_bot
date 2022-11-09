@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 приветствие;приветствие англ.;текст после выбора Языка;текст после выбора Языка англ.;вопрос первые 3 дня;вопрос первые 3 дня англ;вопрос остальные дни;вопрос остальные дни англ.;время вопроса 1;время вопроса 2;время вопроса 3
 Выберете Язык;Choose language;"Этот бот поможет тебе:
 Научиться слышать и понимать свое внутреннее ‘Я’;
@@ -9,3 +10,16 @@ Develop mindfulness in daily activities and improve your true desires. ";"Что
 Напиши свои ощущения.";"What are you feeling now?        Take a break, close your eyes, take a deep breath and direct your attention inside yourself for 1 minute, feel the emotions and sensations in your body, right now.
 Write what your feel.";Что ты сейчас чувствуешь? ;What are you feeling now?;17:37-17:40;20:10-20:11;20:30-20:31
 ;;;;; ;;;;;
+=======
+﻿приветствие;приветствие англ.;текст после выбора Языка;текст после выбора Языка англ.;вопрос первые 3 дня;вопрос первые 3 дня англ;вопрос остальные дни;вопрос остальные дни англ.;время вопроса 1;время вопроса 2
+Выберете Язык;Choose language;"Этот бот поможет тебе:
+Научиться слышать и понимать свое внутреннее ‘Я’;
+Научиться наблюдать за твоими чувствами и ощущениями;
+Развить осознанность к повседневной деятельности и лучше свои истинные желания .";"This bot helps you:
+Learn to hear and understand your inner self;
+Learn to observe your feelings and sensations;
+Develop mindfulness in daily activities and improve your true desires.";"Что ты сейчас чувствуешь?            Остановись , закрой глаза , сделай глубокий вдох и направляй внимание во внутрь себя в течении 1 минуты, обрати внимание на эмоции и ощущения в теле, прямо сейчас.
+Напиши свои ощущения.";"What are you feeling now?        Take a break, close your eyes, take a deep breath and direct your attention inside yourself for 1 minute, feel the emotions and sensations in your body, right now.
+Write what your feel.";Что ты сейчас чувствуешь? ;What are you feeling now?;13:27-13:28;16:40-17:00
+;;;;; ;;;;
+>>>>>>> 179936e (новый функционал)

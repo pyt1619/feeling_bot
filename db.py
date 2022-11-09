@@ -1,6 +1,9 @@
 from datetime import datetime
 import sqlite3
+<<<<<<< HEAD
 import csv
+=======
+>>>>>>> 179936e (новый функционал)
 
 
 def add_user(id_telegram, joining_date):
@@ -116,7 +119,11 @@ def import_messages():
 		except:
 			pass
 
+<<<<<<< HEAD
 		cur.execute("SELECT * from messages ORDER BY id_telegram DESC")
+=======
+		cur.execute("SELECT * from messages ORDER BY send_date DESC")
+>>>>>>> 179936e (новый функционал)
 		records = cur.fetchall()
 		with open('messages.csv', mode='w', encoding='utf-8') as employee_file:
 			employee_writer = csv.writer(employee_file, delimiter=';', quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -133,6 +140,7 @@ def import_messages():
 
 	except sqlite3.Error as error:
 		print("Ошибка при работе с SQLite", error) 
+<<<<<<< HEAD
 
 
 
@@ -170,3 +178,5 @@ def import_messages_for_user(id_telegram):
 
 
 
+=======
+>>>>>>> 179936e (новый функционал)
